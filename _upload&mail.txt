@@ -1,0 +1,53 @@
+파일 업로드
+ - 폼 태그에 enctype속성의 값을 'multipart/form-data'로 설정해야 함
+     enctype을 생략하면 모든 컨트롤의 값을 문자열로 받음(method="post"도 필수)
+
+1. cos.jar 라이브러리 이용
+ - www.servlets.com/cos/ -> cos-20.08.zip 파일 다운로드
+ - lib 폴더안에 'cos.jar'파일 복사
+ - 프로젝트폴더/WebContent/WEB-INF/lib 폴더안으로 복사
+ - 복사 후 사용하려면 '새로 고침'을 한 후 사용해야 함
+ - 여러 파일을 업로드 할 경우 순서가 뒤집힐 수도 있음
+
+1) MultipartRequest 클래스
+ -  cos 라이브러리에서 가장 핵심적인 역할(파일 업로드 담당)을 하는 클래스
+ - 생성자
+MultipartRequest(
+     javax.servlet.http.HttpServletRequest request,
+     java.lang.String saveDirectory,
+     int maxPostSize,
+     java.lang.String encoding,
+     FileRenamePolicy policy)
+
+ - 생성자의 매개변수들
+     request : request객체
+     saveDirectory : 서버에 파일을 실질적으로 저장될 경로(RealPath)를 의미
+     amxPostSize : 한번에 업로드할 수 있는 최대 파일 크기(넘으면 업로드 불가)
+     encoding : 파일의 인코딩 방식(UTF-8, EUC-KR, KSC-5601 등)
+     policy : 파일 이름 중복 처리를 위한 클래스 객체로 기본값은 new
+     DefaultFileRenamePolicy()
+
+ - 주요 메소드들
+리턴		메소드명 및 설명
+Enumeration	getParameterNames() : 폼에서 전송된 파라미터들 중 file이 아닌 컨트롤들의 이름을 Enumeration형으로 리턴
+String[]		getParameterValues() : 전송된 파라미터들의 값들을 배열로 리턴
+String		getParameter(String name) : 지정된 이름의 파라미터 값을 리턴
+Enumeration	getFileNames() : 파일을 여러 개 업로드할 때 file 컨트롤들의 이름을 리턴
+String		getFilesystemName() : 서버에 실제로 업로드된 파일의 이름을 리턴
+String		getOriginalFileName() : 사용자가 업로드한 파일의 원본 이름을 리턴
+String		getContentType() : 업로드된 파일의 타입을 리턴
+
+2. Part 인터페이스를 이용한 파일 업로드
+ - Servlet3.0 이상부터 사용가능
+ - Part 인터페이스는 'multipart/form-data' 형태로 전송된 POST 요청의 항목 데이터를 다루는 기능들이 정의된 인터페이스임
+ - 주요 메소드들
+리턴		메소드명 및 설명
+void		delete() : Part에 담겨있는 파일 항목에 관련된 임시 디렉토리를 포함 모두 삭제
+String		getContentType() : Part객체의 컨텐트타입을 리턴
+String		getHeader(String name) : 지정된 헤더의 정보를 리턴
+Collection	getHeaderNames() : Part객체의 헤더 정보들의 이름을 Collection<String>으로 리턴
+Collection	getHeader() : part객체의 헤더 정보들을 Collection<String>으로 리턴
+InputStream	getInputStream() : Part의 내용을 읽어 들이는 InputSteam객체 리턴
+String		getName() : Part객체의 이름을 리턴
+long		getSzie() : 파일의 크기를 바이트 단위의 long형 정수로 리턴
+void		write(String fileName) : Part객체의 파일을 지정한 이름으로 디스크에 출력

@@ -1,0 +1,10 @@
+apache8.5/
+eclipse/
+jar/
+jdk1.8/
+jre1.8/
+*.exe
+.metadata/
+.recommenders/
+RemoteSystemsTempFiles/
+Servers/

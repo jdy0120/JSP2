@@ -1,0 +1,27 @@
+자바 웹 프로그래밍을 위한 프로그램 설치
+
+1. JDK설치
+ - 설치 위치를 적절히 잡아 원하는 곳에 설치 후 환경변수 path에 bin폴더의 위치를 추가
+ - 자바 웹 프로그래밍시 자바의 기능을 사용하기 위해 설치
+
+2. 웹서버 설치
+ - 단순히 html파일 실행이 아닌 사이트로서의 동작을 하기 위해 설치
+ - 여러 웹서버들 중 Apache Tomcat을 설치함(무료이며, Oracle사에서 지원하기 때문)
+     Apache : 웹 서버로 여러 웹 언어들(JSP,PHP,ASP,.Net 등)을 실행할 수 있게 지원함
+     Tomcat : Apache 웹 서버에서 자바를 사용할 수 있게 해주는 프로그램
+     그 외에도 IIS웹서버에서는 Resin이라는 프로그램을 사용하나 유료이다.
+ - http://tomcat.apache.org/
+   프로그램 파일 다운로드
+ - 다운로드된 파일을 실행하여 설치 시작
+     포트번호는 충돌을 피하기 위해 8081로 지정
+     Administrator 계정은 admin에 1234로 지정
+     Windows Service Name을 기억해둠('Tomcat9')
+ - jre 경로 지정 후 설치할 폴더 지정하고 설치 시작
+ - 설치 후 브라우저의 주소창에 'localhost:8081'입력하면 첫 화면이 나타남
+    localhost : 현재 컴퓨터의 도메인을 의미하는 용어
+    127.0.0.1 : 현재 컴퓨터의 IP주소를 의미하는 용어
+    C:\Users\user\Desktop\jsp\apache9.0\webapps\ROOT\index.jsp 가 실행됨
+
+ - 아파치 실행 후 Java를 아파치에서 사용하려면 아파치 설치 위치인
+ 'C:\Users\user\Desktop\jsp\apache9.0\lib' 안에서 'servlet-api.jar' 파일을 Jre 설치 위치인
+ 'C:\Users\user\Desktop\jsp\java\jre1.8\lib\ext' 안에 복사해 놓음

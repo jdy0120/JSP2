@@ -1,0 +1,27 @@
+2. 자유 게시판 기능
+JSP
+ - /bbs/free_list.jsp : 게시판 목록 화면(페이징, 검색)
+ - /bbs/free_form.jsp : 게시글 등록/수정 화면
+ - /bbs/free_view.jsp : 게시글 보기 화면
+
+Controller
+ - /controller/FreeCtrl.java : 게시판용 서블릿으로 모든 기능을 제어함 목록, 입력/수정 폼, 보기 처리(등록, 수정, 삭제)등의 요청을 한 곳에서 처리함
+
+Model
+ - /vo/FreeInfo.java : 자유 게시판게시글 하나를 저장할 클래스
+ - /vo/PageInfo.java : 페이징 정보를 저장할 클래스로 모든 게시판 공용
+
+ - /action/FreeListAction.java : 자유 게시판 목록 보기로 이동
+ - /action/FreeFormAction.java : 글 등록/수정 폼으로 이동
+ - /action/FreeViewAction.java : 게시글 보기로 이동
+ - /action/FreeProcAction.java : 글 등록/수정/삭제 처리로 이동
+ - 모든 Action클래스들은 Action인터페이스를 implements해야 함
+    즉, Action인터페이스의 execute()메소드를 구현해야 함
+    그래서 모든 Action클래스들은 동일한 이름의 메소드(execute())를 사용하게 됨
+
+ - /svc/FreeListSvc.java : 자유 게시판 목록 보기로 이동
+ - /svc/FreeFormSvc.java : 글 등록/수정 폼으로 이동
+ - /svc/FreeViewAction.java : 게시글 보기 Service 클래스
+ - /svc/FreeProcSvc.java : 글 등록/수정/삭제 처리 Service 클래스
+
+ - /dao/FreeDao.java : 자유 게시판의 모든 작업 처리 클래스

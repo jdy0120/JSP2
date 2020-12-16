@@ -1,0 +1,138 @@
+액션태그
+ - JSP 페이지에서 자바코드 등의 스크립트 언어를 사용하지 않고 HTML태그 형식으로 다른 페이지의 서블릿이나
+  자바빈의 객체에 접근할 수 있도록 태그를 이용해 구현된 기능
+
+ - 액션태그의 종류
+     페이지 흐름 제어 액션 : forward / include 액션
+     자바빈 사용 액션 : useBean 액션
+     애플릿 사용 액션 : plugin 액션
+
+1. forward 액션
+ - pageContext 객체의 forward() 메소드가 태그로 구현된 기능
+ - 현재 페이지의 요청과 응답에 관한 제어권을 page 속성에 지정된 이동할 페이지로 영구적으로 넘기는 기능
+ - 이동할 페이지의 주소는 웹 애플리케이션의 컨텍스트 루트를 기준으로 한 절대 경로나 상대 경로로만 지정이 가능
+  (http:// 와 도메인 부분, 포트번호 등을 생략해야 함)
+ - 액션태그 사이에는 주석을 달면 안됨(500 error 발생)
+ - 문법
+<jsp:forward page="이동할 페이지" />
+
+ - 이동할 페이지에 추가적으로 파라미터를 넘겨줘야 할 경우
+<jsp:forward page="이동할 페이지">
+     <jsp:param name="파라미터명1" value="파라미터값1" />
+     <jsp:param name="파라미터명2" value="파라미터값2" /> 
+      ...
+     <jsp:param name="파라미터명n" value="파라미터값n" />
+<jsp:forward>
+or
+<jsp:forward page="이동할 페이지?파라미터명1=파라미터값1&..." />
+
+2. include 액션
+ - include 지시어처럼 여러 파일을 한 화면에 담을 수 있는 기능
+ - 단, include 지시어는 파일들을 JSP파일에 복사하는 개념으로 사용하고, include 액션은 임시로 제어권을
+ include되는 파일에 넘겼다가 그 파일의 처리가 끝나면 다시 제어권을 받아오는 방식
+ - 문법
+<jsp:include page="포함할 페이지" flush="false" />
+or
+<jsp:include page="포함할 페이지" flush="false"></jsp:include>
+
+
+ - 포함할 페이지에 추가적으로 파라미터를 넘겨줘야 할 경우
+<jsp:include page="이동할 페이지">
+     <jsp:param name="파라미터명1" value="파라미터값1" />
+     <jsp:param name="파라미터명2" value="파라미터값2" /> 
+      ...
+     <jsp:param name="파라미터명n" value="파라미터값n" />
+<jsp:include>
+or
+<jsp:include page="이동할 페이지?파라미터명1=파라미터값1&..." />
+ - 해당 파일에서 선언한 변수 등을 include한 페일에서는 접글할 수 없음
+     include지시어를 이용한 방법과의 가장 큰 차이점
+
+3. useBean 액션
+ - 자바빈을 사용하는 액션 태그
+
+1)자바빈(Java Bean)
+ - 관련이 있는 데이터들을 젖아하는 하나의 클래스
+ - 자바빈 클래스의 설계규약
+     a. 멤버 변수마다 별도의 getter와 setter 메소드가 존재해야 함
+     b. getter에는 파라미터가 없어야 함
+     c. setter에는 반드시 하나 이상의 파라미터가 존재해야 함
+     d. 생성자에는 파라미터가 없어야 함 - 인수없는 생성자가 반드시 존재해야 함
+	- 인스턴스 생성시 간편해지며, 특별한 값을 사용하지 않아도됨
+     e. 멤버 변수의 접근 제어지시자는 private이며, 각 getter/setter 메소드는 public으로 정의되어야 하며
+  	클래스도 public으로 정의한다.
+
+2) useBean 태그
+ - 자바빈 클래스를 JSP파일에서 사용할 수 있게 해주는 태그
+ - 문법
+<jsp:useBean id="빈이름" class="자바빈 패키지 및 클래스명" scope="사용범위" />
+     id : 인스턴스 이름
+     class : 자바빈 클래스가 있는 패키지.클래스명
+     scope : 자바빈 클래스의 사용범위로 page,request,session,application 중 하나를 선택하면 되고, 기본값은 page임
+
+3) setProperty 태그
+ - 자바빈 클래스의 멤버변수의 값(속성)을 변경하기 위한 태그
+ - 문법
+<jsp:setProperty name="빈이름" property="속성명" value="속성값" />
+     name : 자바빈의 현재 인스턴스 이름
+     property : 자바빈의 멤버변수 이름
+     value : 변경할 값
+ - 자바빈의 멤버변수는 거의 private이므로 setProperty로 직접 접근하여 수정하는 것이 아닌 자바빈 내부의 setter메소드를
+ 실행시켜 값을 변경시키는 것
+ - 변경하는 값이 클라이언트에서 전송되어 오는 파라미터일 경우 value 대신 param을 사용하고, 값도 파라미터의 이름을 입력함
+<jsp:setProperty name="빈이름" property="속성명" param="파라미터명" />
+
+ - 만약 클라이언트에서 전송되어 오는 파라미터들의 이름과 빈 객체의 속성이름이 동일하면 와일드카드 '*'로 한 번에 처리할 수 있음
+<jsp:setProperty name="빈이름" property="*" />
+
+4) getProperty 태그
+ - 자바빈 클래스의 멤버변수의 값(속성)을 가져오기 위한 태그
+ - 문법
+<jsp:getProperty name="빈이름" property="속성명" />
+     name : 자바빈의 현재 인스턴스 이름
+     property : 자바빈의 멤버변수 이름
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
