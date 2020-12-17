@@ -1,6 +1,7 @@
 package action;
 
 import javax.servlet.http.*;	// 받아 온 request와 response를 위해 import
+import java.io.PrintWriter;
 import svc.*;
 import vo.*;
 
@@ -11,18 +12,39 @@ public class FreeFormAction implements Action {
 		request.setCharacterEncoding("utf-8");
 		String wtype = request.getParameter("wtype");
 		ActionForward forward = new ActionForward();
-/*
+		
 		if (wtype.equals("up")) {	// 글 수정이면
-			int idx = Integer.parseInt(request.getParameter("idx"));
 			// 글번호로 정수로 형변환을 시킴
+			HttpSession session = request.getSession();
+			// JSP가 아니므로 HttpSession 인스턴스를 만들어야함
+			MemberInfo loginMember = (MemberInfo)session.getAttribute("loginMember");
+			String uid = null;
+			if (loginMember != null)	uid = loginMember.getMlid();
+			// 현재 로그인한 회원의 아이디를 uid에 저장
+			
+			int idx = Integer.parseInt(request.getParameter("idx"));
+			String pwd = request.getParameter("pwd");
+			String mem = request.getParameter("mem");
+			
 			FreeFormSvc freeFormSvc = new FreeFormSvc();
-			FreeInfo article = freeFormSvc.getArticle(idx);
-			// 특정 게시물의 데이터들을 FreeInfo 인스턴스에 저장
-			request.setAttribute("article", article);
-			// 받아온 게시물 객체를 request객체에 추가
-		}*/
+			// 글번호로 정수로 형변환을 시킴
+			FreeInfo article = freeFormSvc.getArticleUp(idx, mem, uid, pwd);
+			if (article != null) {
+				request.setAttribute("article", article);
+				// 수정할 게시글이 데이터를 request객체에 담음
+			} else {
+				response.setContentType("text/html;charset=utf-8");
+				PrintWriter out = response.getWriter();
+				out.println("<script>");
+				out.println("alert('비밀번호가 틀렸습니다.')");
+				out.println("history.bakc();");
+				out.println("</script>");
+			}
+		}
+		
 		forward.setPath("/bbs/free_form.jsp");
 		// 이동할 URL 지정
+		
 
 		return forward;
 	}

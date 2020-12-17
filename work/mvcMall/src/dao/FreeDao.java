@@ -195,4 +195,48 @@ public class FreeDao {
 
 		return result;
 	}
+	
+	public FreeInfo getArticleUp(int idx,String mem, String uid, String pwd) {
+	//수정글에 대한 권한을 체크하는 메소드
+		FreeInfo article = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		
+		try {
+			String where = " and fl_ismember = ";
+			if (mem.equals("n")){
+				where += "'n' and fl_pwd = '" + pwd + "'";
+			} else {
+				where += "'y' and fl_writer = '" + uid + "'";
+			}
+			
+			sql = "select * from t_free_list where fl_status = 'a'" + " and fl_idx = " + idx + where;
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				article = new FreeInfo();
+				article.setFl_idx(rs.getInt("fl_idx"));
+				article.setFl_reply(rs.getInt("fl_reply"));
+				article.setFl_read(rs.getInt("fl_read"));
+				article.setFl_good(rs.getInt("fl_good"));
+				article.setFl_bad(rs.getInt("fl_bad"));
+				article.setFl_ismember(rs.getString("fl_ismember"));
+				article.setFl_writer(rs.getString("fl_writer"));
+				article.setFl_pwd(rs.getString("fl_pwd"));
+				article.setFl_title(rs.getString("fl_title"));
+				article.setFl_content(rs.getString("fl_content"));
+				article.setFl_date(rs.getString("fl_date"));
+				article.setFl_status(rs.getString("fl_status"));
+				article.setFl_ip(rs.getString("fl_ip"));
+				// 받아온 레코드들로 article 인스턴스에 변수값을 넣음
+			}
+		}  catch(Exception e) {
+			System.out.println("getArticleup() 오류");
+			e.printStackTrace();
+		} finally {
+			close(rs);	close(stmt);
+		}
+		return article;
+	}
 }
