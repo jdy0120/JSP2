@@ -2,7 +2,7 @@ package vo;
 
 // 한 명의 회원정보를 저장하기 위한 클래스
 public class MemberInfo {
-	private String mlid,mlpwd,mlname,mlgender,mlbirth,mlphone,mlemail,mldate,mllast,mlstatus;
+	private String mlid, mlpwd, mlname, mlgender, mlbirth, mlphone, mlemail, mldate, mllast, mlstatus;
 	private int mlpoint;
 	public String getMlid() {
 		return mlid;
@@ -70,5 +70,4 @@ public class MemberInfo {
 	public void setMlpoint(int mlpoint) {
 		this.mlpoint = mlpoint;
 	}
-	
 }

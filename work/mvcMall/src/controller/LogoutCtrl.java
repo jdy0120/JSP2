@@ -6,25 +6,22 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
-// Session 객체를 사용할 경우 http패키지에 있는 Session클래스도 import해야 함
+// Session 객체를 사용할 경우 http패키지에 있는 HttpSesison클래스도 import해야 함
 
-/**
- * Servlet implementation class LogoutCtrl
- */
 @WebServlet("/logout")
 public class LogoutCtrl extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+
     public LogoutCtrl() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		session.invalidate();
 		// 세션에 있는 모든 속성(attribute)을 삭제
-		// 로그인/아웃과 상관없는 세션 속성이 잇을 경우 removeAttribute()로 특정 속성만 삭제하면 된
+		// 로그인/아웃과 상관없는 세션 속성이 있을 경우 
+		// removeAttribute()로 특정 속성만 삭제하면 됨
 		response.sendRedirect("index.jsp");
 	}
 }

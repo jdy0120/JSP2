@@ -1,14 +1,16 @@
 package action;
 
-import java.io.*; // 등록 실패시 자바스크립트 사용을 위한 import
+import java.io.PrintWriter;	// 등록 실패시 자바스크립트 사용을 위한 import
 import javax.servlet.*;
 import javax.servlet.http.*;
 import svc.*;
 import vo.*;
 
-public class FreeProcAction implements Action{
-	// 게시글 등록 처리 클래스
-	public ActionForward execute(HttpServletRequest request, HttpServletResponse response) throws Exception{
+public class FreeProcAction implements Action {
+// 게시글 등록 처리 클래스
+	public ActionForward execute(HttpServletRequest request, 
+			HttpServletResponse response) throws Exception {
+		System.out.println("FreeProcAction");
 		ActionForward forward = null;
 		request.setCharacterEncoding("utf-8");
 		String wtype = request.getParameter("wtype");
@@ -21,38 +23,40 @@ public class FreeProcAction implements Action{
 			freeInfo.setFl_title(request.getParameter("title"));
 			freeInfo.setFl_content(request.getParameter("content"));
 		}
+
 		if (wtype.equals("del") || wtype.equals("up")) {
-		// 글삭제나 수정이 ㄹ경우 게시글 번호를 받아옴
+		// 글삭제나 수정일 경우 게시글 번호를 받아옴
 			int idx = Integer.parseInt(request.getParameter("idx"));
 			freeInfo.setFl_idx(idx);
 		}
+
 		FreeProcSvc freeProcSvc = new FreeProcSvc();
 		boolean isSuccess = false;
 		String link = null;
 		HttpSession session = request.getSession();
-		MemberInfo loginMember = (MemberInfo)session.getAttribute("loginMember");
+		MemberInfo loginMember = 
+			(MemberInfo)session.getAttribute("loginMember");
 		if (wtype.equals("in")) {
 			freeInfo.setFl_ismember("n");
-			if (loginMember != null) {
+			if (loginMember != null) {	// 회원 글등록일 경우
 				freeInfo.setFl_ismember("y");
 				freeInfo.setFl_writer(loginMember.getMlid());
-				
 			}
 			freeInfo.setFl_ip(request.getRemoteAddr());
-			isSuccess = freeProcSvc.freeInsert(freeInfo); // 글등록
+			isSuccess = freeProcSvc.freeInsert(freeInfo);
 			link = "brd_list.free";
 		} else if (wtype.equals("up")) {
 			link = "brd_view.free";
 		} else {
 			link = "brd_list.free";
 		}
-		
+
 		if (isSuccess) {
 			forward = new ActionForward();
 			forward.setRedirect(true);
 			forward.setPath(link);
 		}
-		
+
 		return forward;
 	}
 }

@@ -3,7 +3,9 @@ package vo;
 public class FreeInfo {
 // 자유게시판 게시글 하나를 저장할 클래스
 	private int fl_idx, fl_reply, fl_read, fl_good, fl_bad;
-	private String fl_ismember, fl_writer, fl_pwd, fl_title, fl_content, fl_date, fl_status, fl_ip;
+	private String fl_ismember, fl_writer, fl_pwd, fl_title;
+	private String fl_content, fl_date, fl_status, fl_ip;
+
 	public int getFl_idx() {
 		return fl_idx;
 	}

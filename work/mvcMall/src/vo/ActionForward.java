@@ -4,27 +4,28 @@ package vo;
 public class ActionForward {
 	private String path;
 	private boolean redirect;
-	
-	public ActionForward() {
-		
-	}
-	
+
+	public ActionForward() {}
+	// 매개변수 없이 인스턴스를 생성하기 위한 디폴트 생성자
+
 	public ActionForward(String path, boolean redirect) {
 		this.path = path;
 		this.redirect = redirect;
 	}
-	// getter setter
+
 	public String getPath() {
 		return path;
 	}
-	public boolean isRedirect() {
-		return redirect;
-	}
-	public void setRedirect(boolean redirect) {
-		this.redirect = redirect;
-	}
+
 	public void setPath(String path) {
 		this.path = path;
 	}
-	
+
+	public boolean isRedirect() {
+		return redirect;
+	}
+
+	public void setRedirect(boolean redirect) {
+		this.redirect = redirect;
+	}
 }
