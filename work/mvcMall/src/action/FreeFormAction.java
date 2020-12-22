@@ -12,6 +12,7 @@ public class FreeFormAction implements Action {
 		request.setCharacterEncoding("utf-8");
 		String wtype = request.getParameter("wtype");
 		ActionForward forward = new ActionForward();
+		// 작업 후 이동할 때 이동하는 방식(redirect or dispatch)을 정해서 저장하는 인스턴스
 		
 		if (wtype.equals("up")) {	// 글 수정이면
 			// 글번호로 정수로 형변환을 시킴
@@ -39,6 +40,7 @@ public class FreeFormAction implements Action {
 				out.println("alert('비밀번호가 틀렸습니다.')");
 				out.println("history.bakc();");
 				out.println("</script>");
+				out.close();
 			}
 		}
 		

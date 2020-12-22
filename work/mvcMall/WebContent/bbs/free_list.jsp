@@ -8,7 +8,6 @@ ArrayList<FreeInfo> articleList =
 // 화면에서 보여줄 게시글들의 목록
 PageInfo pageInfo = (PageInfo)request.getAttribute("pageInfo");
 // 페이징에 필요한 각종 데이터들을 담은 인스턴스
-
 String schtype = null, keyword = null, schargs = "", args = "";
 if (pageInfo.getSchtype() == null || pageInfo.getKeyword() == null) {
 	schtype = "";	keyword = "";
@@ -25,7 +24,6 @@ int pcnt = pageInfo.getPcnt();		// 전체 페이지 수
 int spage = pageInfo.getSpage();	// 블록 시작 페이지 번호
 int epage = pageInfo.getEpage();	// 블록 종료 페이지 번호
 int rcnt = pageInfo.getRcnt();		// 검색된 게시물 개수
-
 args = "&cpage=" + cpage + schargs;
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -79,7 +77,6 @@ if (articleList != null && rcnt > 0) {	// 검색결과가 있으면
 			"' title='" + title + "'>";
 		if (title.length() > 28)
 			title = title.substring(0, 26) + "...";
-
 		reply = "";
 		if (articleList.get(i).getFl_reply() > 0)
 			reply = " [" + articleList.get(i).getFl_reply() + "]";
@@ -89,7 +86,7 @@ if (articleList != null && rcnt > 0) {	// 검색결과가 있으면
 <td><%=seq-- %></td>
 <td align="left"><%=lnk + title + "</a>" + reply %></td>
 <td><%=articleList.get(i).getFl_writer() %></td>
-<td><%=articleList.get(i).getFl_date().substring(2, 10) %></td>
+<td><%=articleList.get(i).getFl_date().substring(2, 10).replace("-",".") %></td>
 <td><%=articleList.get(i).getFl_read() %></td>
 </tr>
 <%
@@ -109,7 +106,6 @@ if (rcnt > 0) {
 	pcnt = rcnt / 10;
 	if (rcnt % 10 > 0)	pcnt++;
 	// 전체 페이지수 = 전체게시물수 / 페이지크기 -> 나머지가 있으면 1증가
-
 	if (cpage == 1) {
 		out.println("[<<]&nbsp;&nbsp;[<]&nbsp;&nbsp;");
 	} else {
@@ -118,7 +114,6 @@ if (rcnt > 0) {
 		out.print("<a href='brd_list.free?cpage=" + (cpage - 1) + schargs + "'>");
 		out.println("[<]</a>&nbsp;&nbsp;");
 	}
-
 	for (int i = 1, j = spage ; i <= 10 && j <= pcnt ; i++, j++) {
 		if (cpage == j) {
 			out.println("&nbsp;<strong>" + j + "</strong>&nbsp;");
@@ -127,7 +122,6 @@ if (rcnt > 0) {
 			out.println(j + "</a>&nbsp;");
 		}
 	}
-
 	if (cpage == pcnt) {
 		out.println("&nbsp;&nbsp;[>]&nbsp;&nbsp;[>>]");
 	} else {

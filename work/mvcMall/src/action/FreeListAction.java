@@ -9,6 +9,7 @@ public class FreeListAction implements Action {
 // 게시글 목록을 받아와 연결하는 클래스
 	public ActionForward execute(HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
+
 		ArrayList<FreeInfo> articleList = new ArrayList<FreeInfo>();
 		// 게시글 목록을 저장할 ArrayList객체로 FreeInfo형 인스턴스만 저장함
 
@@ -23,8 +24,7 @@ public class FreeListAction implements Action {
 		String keyword = request.getParameter("keyword");
 		// 검색어
 		String where = "";
-		if (schtype != null && keyword != null && !keyword.equals("")) {
-		// 검색조건과 검색어가 있으면
+		if (schtype != null && keyword != null) {
 			if (schtype.equals("tc")) {	// 검색 조건이 '제목+내용' 이면
 				where = " and (fl_title like '%" + keyword + "%' " + 
 					" or fl_content like '%" + keyword + "%') ";

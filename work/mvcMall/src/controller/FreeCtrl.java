@@ -43,7 +43,7 @@ public class FreeCtrl extends HttpServlet {
 			case "/brd_pwd.free" :		// 비밀번호 입력 폼
 				action = new FreePwdAction();
 				break;
-			case "/brd_proc.free" :		// 게시글 처리
+			case "/brd_proc.free" :		// 게시글 처리(등록, 수정, 삭제)
 				action = new FreeProcAction();
 				break;
 		}

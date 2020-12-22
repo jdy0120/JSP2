@@ -26,6 +26,5 @@ if (loginMember == null) {
 %>
 <hr />
 <a href="brd_list.free">자유 게시판</a><br>
-<a href="brd_form.free?wtype=in">자유 게시판 글 등록</a>
 </body>
 </html>

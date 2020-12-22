@@ -9,18 +9,22 @@ import vo.*;
 
 public class FreeDao {
 	private static FreeDao freeDao;
+	// 인스턴스를 하나만 만들기 우해 static으로 선언
 	private Connection conn;
 
 	private FreeDao() {}
+	// 기본생성자로 외부에서 함부로 생성하지 못하게 private으로 선언
 	
 	public static FreeDao getInstance() {
-		if (freeDao == null) {
-			freeDao = new FreeDao();
+		// FreeDao의 인스턴스를 생성시켜 리턴하는 메소드로 인스턴스 없이 외부에서 접근할 수 있도록 static으로 선언된
+		if (freeDao == null) { // 현재 생성된 인스턴스가 없으면
+			freeDao = new FreeDao(); // 새롭게 인스턴스 생성
 		}
 		return freeDao;
 	}
 	
 	public void setConnection(Connection conn) {
+	// 현클래스의 DB작업을 위해 Connection객체를 받아오는 메소드
 		this.conn = conn;
 	}
 
@@ -47,8 +51,7 @@ public class FreeDao {
 		return result;
 	}
 
-	public ArrayList<FreeInfo> getArticleList(
-		String where, int cpage, int limit) {
+	public ArrayList<FreeInfo> getArticleList(String where, int cpage, int limit) {
 	// 검색된 게시글 목록을 ArrayList형태로 리턴하는 메소드
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -58,7 +61,7 @@ public class FreeDao {
 		FreeInfo freeInfo = null;
 		// articleList에 담을 레코드를 저장할 인스턴스
 		int snum = (cpage - 1) * limit;
-		// limit 명령에서 데이터를 가져올 시작 인덱스 번호
+		// 쿼리의 limit 명령에서 데이터를 가져올 시작 인덱스 번호
 
 		try {
 			sql ="select * from t_free_list where fl_status = 'a' " + 
@@ -66,6 +69,7 @@ public class FreeDao {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
+			// rs가 비엇을 경우 그냥 빈 상태로 리턴하기 위해 if를 사용하지 않고 바로 while문 사용
 				freeInfo = new FreeInfo();
 				// 하나의 레코드(게시글)를 저장할 인스턴스 생성
 
@@ -82,7 +86,7 @@ public class FreeDao {
 				freeInfo.setFl_date(rs.getString("fl_date"));
 				freeInfo.setFl_status(rs.getString("fl_status"));
 				freeInfo.setFl_ip(rs.getString("fl_ip"));
-				// 받아온 레코드들로 freeInto 인스턴스에 변수 값을 넣음
+				// 받아온 레코드들로 freeInto 인스턴스에 멤버변수 값으로 넣음
 
 				articleList.add(freeInfo);
 				// 생성된 FreeInfo형 인스턴스를 articleList 하나씩 저장
@@ -160,8 +164,8 @@ public class FreeDao {
 	public int freeInsert(FreeInfo freeInfo) {
 	// 게시글 등록 메소드
 		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		int idx = 1, result = 0;
+		ResultSet rs = null;	// 등록할 게시글의 번호를 얻기 위한 ResultSet
+		int idx = 1, result = 0;	// 새로운 글번호와 쿼리 실행 결과 개수를 저장할 변수
 		String sql = null;
 
 		try {
