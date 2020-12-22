@@ -10,7 +10,7 @@ public class FreeListSvc {
 // 게시글 목록 보기의 비즈니스 로직을 처리하는 클래스
 	public int getArticleCount(String where) {
 	// 게시글의 전체 개수를 리턴하는 메소드
-		int rcnt = 0;	// 레코드 개수를 저장할 변수
+		int rcnt = 0;	// 전체 레코드 개수를 저장할 변수
 		Connection conn = getConnection();
 		FreeDao freeDao = FreeDao.getInstance();
 		freeDao.setConnection(conn);

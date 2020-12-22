@@ -9,22 +9,23 @@ import vo.*;
 
 public class FreeDao {
 	private static FreeDao freeDao;
-	// 인스턴스를 하나만 만들기 우해 static으로 선언
+	// 인스턴스를 하나만 만들기 위해 static으로 선언
 	private Connection conn;
 
 	private FreeDao() {}
 	// 기본생성자로 외부에서 함부로 생성하지 못하게 private으로 선언
 	
 	public static FreeDao getInstance() {
-		// FreeDao의 인스턴스를 생성시켜 리턴하는 메소드로 인스턴스 없이 외부에서 접근할 수 있도록 static으로 선언된
-		if (freeDao == null) { // 현재 생성된 인스턴스가 없으면
-			freeDao = new FreeDao(); // 새롭게 인스턴스 생성
+	// FreeDao의 인스턴스를 생성시켜 리턴하는 메소드로 인스턴스 없이 외부에서 
+	// 접근할 수 있도록 static으로 선언됨
+		if (freeDao == null) {	// 현재 생성된 인스턴스가 없으면
+			freeDao = new FreeDao();	// 새롭게 인스턴스를 생성
 		}
 		return freeDao;
 	}
 	
 	public void setConnection(Connection conn) {
-	// 현클래스의 DB작업을 위해 Connection객체를 받아오는 메소드
+	// 현 클래스의 DB작업을 위해 Connection객체를 받아오는 메소드
 		this.conn = conn;
 	}
 
@@ -41,6 +42,7 @@ public class FreeDao {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			if (rs.next())	result = rs.getInt(1);
+			// 검색된 게시물의 개수를 result에 담음
 		} catch(Exception e) {
 			System.out.println("getArticleCount() 오류");
 			e.printStackTrace();
@@ -51,7 +53,8 @@ public class FreeDao {
 		return result;
 	}
 
-	public ArrayList<FreeInfo> getArticleList(String where, int cpage, int limit) {
+	public ArrayList<FreeInfo> getArticleList(
+		String where, int cpage, int limit) {
 	// 검색된 게시글 목록을 ArrayList형태로 리턴하는 메소드
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -69,7 +72,7 @@ public class FreeDao {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
-			// rs가 비엇을 경우 그냥 빈 상태로 리턴하기 위해 if를 사용하지 않고 바로 while문 사용
+			// rs가 비었을 경우 빈 상태로 리턴하기 위해 if를 사용하지 않고 바로 while사용
 				freeInfo = new FreeInfo();
 				// 하나의 레코드(게시글)를 저장할 인스턴스 생성
 
@@ -108,8 +111,7 @@ public class FreeDao {
 		int result = 0;
 		
 		try {
-			sql = "update t_free_list set fl_read = fl_read + 1 " + 
-				" where fl_idx = " + idx;
+			sql = "update t_free_list set fl_read = fl_read + 1 where fl_idx = " + idx;
 			stmt = conn.createStatement();
 			result = stmt.executeUpdate(sql);
 		} catch(Exception e) {
@@ -130,12 +132,13 @@ public class FreeDao {
 		String sql = null;
 		
 		try {
-			sql = "select * from t_free_list " + 
-				" where fl_status = 'a' and fl_idx = " + idx;
+			sql = "select * from t_free_list where fl_status = 'a' and fl_idx = " + idx;
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
+			// rs에 데이터가 있으면(해당 게시물이 있으면)
 				article = new FreeInfo();
+				// 리턴할 인스턴스(데이터를 저장할 인스턴스) 생성
 				article.setFl_idx(rs.getInt("fl_idx"));
 				article.setFl_reply(rs.getInt("fl_reply"));
 				article.setFl_read(rs.getInt("fl_read"));
@@ -149,7 +152,7 @@ public class FreeDao {
 				article.setFl_date(rs.getString("fl_date"));
 				article.setFl_status(rs.getString("fl_status"));
 				article.setFl_ip(rs.getString("fl_ip"));
-				// 받아온 레코드들로 article 인스턴스에 변수 값을 넣음
+				// 받아온 레코드들로 article 인스턴스의 멤버 변수에 값을 넣음
 			}
 		} catch(Exception e) {
 			System.out.println("getArticle() 오류");
@@ -164,7 +167,7 @@ public class FreeDao {
 	public int freeInsert(FreeInfo freeInfo) {
 	// 게시글 등록 메소드
 		PreparedStatement pstmt = null;
-		ResultSet rs = null;	// 등록할 게시글의 번호를 얻기 위한 ResultSet
+		ResultSet rs = null;		// 등록할 게시글의 번호를 얻기 위한 ResultSet
 		int idx = 1, result = 0;	// 새로운 글번호와 쿼리 실행 결과 개수를 저장할 변수
 		String sql = null;
 
@@ -174,10 +177,9 @@ public class FreeDao {
 			rs = pstmt.executeQuery();
 			if (rs.next())	idx = rs.getInt(1);
 			// 등록할 게시글의 새로운 글번호 생성
-			
-			sql = "insert into t_free_list (fl_idx, fl_ismember, " + 
-				"fl_writer, fl_pwd, fl_title, fl_content, fl_ip) " + 
-				"values (?, ?, ?, ?, ?, ?, ?)";
+
+			sql = "insert into t_free_list (fl_idx, fl_ismember, fl_writer, fl_pwd, " + 
+				"fl_title, fl_content, fl_ip) values (?, ?, ?, ?, ?, ?, ?)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			pstmt.setString(2, freeInfo.getFl_ismember());
@@ -199,27 +201,80 @@ public class FreeDao {
 
 		return result;
 	}
+
+	public int freeUpdate(FreeInfo freeInfo) {
+	// 게시글 수정을 위한 메소드
+		PreparedStatement pstmt = null;
+		String sql = null;
+		int result = 0;		// 쿼리 실행 결과 개수를 저장할 변수
+
+		try {
+			sql = "update t_free_list set fl_title = ?, fl_content = ? where fl_idx = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, freeInfo.getFl_title());
+			pstmt.setString(2, freeInfo.getFl_content());
+			pstmt.setInt(3, freeInfo.getFl_idx());
+			result = pstmt.executeUpdate();	// 게시글 수정
+		} catch(Exception e) {
+			System.out.println("freeUpdate() 오류");
+			e.printStackTrace();
+		} finally {
+			close(pstmt);
+		}
+
+		return result;
+	}
 	
-	public FreeInfo getArticleUp(int idx,String mem, String uid, String pwd) {
-	//수정글에 대한 권한을 체크하는 메소드
+	public int freeDelete(FreeInfo freeInfo) {
+	// 게시글 삭제을 위한 메소드
+		Statement stmt = null;
+		String sql = null;
+		int result = 0;		// 쿼리 실행 결과 개수를 저장할 변수
+		
+		try {
+			String where = " where fl_idx = " + freeInfo.getFl_idx();
+			if (freeInfo.getFl_ismember().equals("y")) { // 회원글인 경우
+				where += " and fl_writer = ? " + freeInfo.getFl_writer() + "' ";
+			} else { // 비회원 글인 경우
+				where += " and fl_pwd = '" + freeInfo.getFl_pwd() + "' ";
+			}
+			sql = "update t_free_list set fl_status = 'b' " + where;
+			stmt = conn.createStatement();
+			result = stmt.executeUpdate(sql);
+			
+		} catch(Exception e) {
+			System.out.println("freeUpdate() 오류");
+			e.printStackTrace();
+		} finally {
+			close(stmt);
+		}
+
+		return result;
+	}
+
+	public FreeInfo getArticleUp(int idx, String ismember, String uid, String pwd) {
+	// 수정할 글에 대한 권한이 있을 경우 해당 데이터를 가져와 리턴할 메소드
 		FreeInfo article = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		String sql = null;
-		
+
 		try {
 			String where = " and fl_ismember = ";
-			if (mem.equals("n")){
+			if (ismember.equals("n")) {
+			// 게시물이 비회원글이면 사용자가 입력한 암호를 조건에 넣음
 				where += "'n' and fl_pwd = '" + pwd + "'";
 			} else {
+			// 게시물이 회원글이면 현재 로그인한 아이디와 작성자 아이디를 비교하는 조건을 넣음
 				where += "'y' and fl_writer = '" + uid + "'";
 			}
-			
-			sql = "select * from t_free_list where fl_status = 'a'" + " and fl_idx = " + idx + where;
+			sql = "select * from t_free_list where fl_status = 'a' and fl_idx = " + idx + where;
+			System.out.println(sql);
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
 				article = new FreeInfo();
+				// 검색된 게시물의 정보를 저장할 FreeInfo형 인스턴스 article 생성
 				article.setFl_idx(rs.getInt("fl_idx"));
 				article.setFl_reply(rs.getInt("fl_reply"));
 				article.setFl_read(rs.getInt("fl_read"));
@@ -233,14 +288,15 @@ public class FreeDao {
 				article.setFl_date(rs.getString("fl_date"));
 				article.setFl_status(rs.getString("fl_status"));
 				article.setFl_ip(rs.getString("fl_ip"));
-				// 받아온 레코드들로 article 인스턴스에 변수값을 넣음
+				// 받아온 레코드들로 article 인스턴스의 멤버 변수에 값을 넣음
 			}
-		}  catch(Exception e) {
-			System.out.println("getArticleup() 오류");
+		} catch(Exception e) {
+			System.out.println("getArticleUp() 오류");
 			e.printStackTrace();
 		} finally {
 			close(rs);	close(stmt);
 		}
+		
 		return article;
 	}
 }
