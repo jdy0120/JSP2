@@ -25,3 +25,70 @@ Model
  - /svc/FreeProcSvc.java : 글 등록/수정/삭제 처리 Service 클래스
 
  - /dao/FreeDao.java : 자유 게시판의 모든 작업 처리 클래스
+
+
+3. 상품 관련 기능
+ - 백엔드 : 상품목록(페이징, 검색), 상품상세보기, 상품등록, 정보수정
+ - 프론트 : 상품목록(페이징, 검색), 상품상세보기, 장바구니
+
+View-back
+ - /admin/product/pdt_list.jsp : 상품 목록 화면(페이징, 검색)
+ - /admin/product/pdt_view.jsp : 상품 상세 보기 화면(front에서의 view를 활용하면 간단)
+ - /admin/product/pdt_form.jsp : 상품 등록 폼 화면
+ - /admin/product/pdt_up_form.jsp : 상품 등록 폼 화면
+View-front
+ - /product/pdt_list.jsp : 상품 목록 화면(페이징, 검색)
+ - /product/pdt_view.jsp : 상품 상세 보기화면(옵션&수량 선택, 장바구니로 연결, 바로구매로 연결)
+ - /order/cart.jsp : 장바구니(옵션&수량 변경, 상품선택, 삭제, 결제화면으로 연결)
+
+Controller-back
+ - /admin/controller/ProductCtrl.java : 상품용 서블릿으로 모든 기능을 제어함(목록, 등록, 수정 등)
+ - /admin/controller/OrderCtrl.java : 어드민 주문관리용 서블릿으로 모든 기능을 제어함(주문목록, 정보보기 등)
+Controller-front
+ - /controller/ProductCtrl.java : 상품용 서블릿으로 모든 기능을 제어함
+ - /controller/OrderCtrl.java : 주문용 서블릿으로 모든 기능을 제어함(장바구니, 결제화면, 주문처리 등)
+
+Model-공용
+ - /vo/PtdPageInfo.java : 상품관련 페이징 정보를 저장할 클래스
+ - /vo/PdtInfo.java : 상품정보를 저장할 클래스
+ - /vo/CataBigInfo.java : 대분류 정보를 저장할 클래스
+ - /vo/CataSmallInfo.java : 소분류 정보를 저장할 클래스
+ - /vo/BrandInfo.java : 브랜드 정보를 저장할 클래스
+
+Model-back
+ - /admin/action/PdtListAction : 상품 목록 보기로 이동시키는 클래스
+ - /admin/action/PdtViewAction : 상품 정보 보기로 이동시키는 클래스
+ - /admin/action/PdtInFormAction : 상품 등록 폼으로 이동시키는 클래스
+ - /admin/action/PdtUpFormAction : 상품 수정 폼으로 이동시키는 클래스
+ - /admin/svc/PdtInProcAction : 상품 등록 폼으로 이동시키는 클래스
+ - /admin/svc/PdtUpProcAction : 상품 수정 폼으로 이동시키는 클래스
+
+ - /admin/svc/PdtListSvc : 상품 목록 보기 비즈니스 로직을 처리하는 클래스
+ - /admin/svc/PdtViewSvc : 상품 정보 보기 비즈니스 로직을 처리하는 클래스
+ - /admin/svc/PdtInFormSvc : 상품 등록 폼으로 이동시키는 클래스(분류와 브랜드 목록을 DB에서 가져와야 하므로 Svc 필요)
+ - /admin/svc/PdtUpFormSvc : 상품 수정 폼 비즈니스 로직을 처리하는 클래스
+ - /admin/svc/PdtInProcSvc : 상품 등록 처리 비즈니스 로직을 처리하는 클래스
+ - /admin/svc/PdtUpProcSvc : 상품 수정 처리 비즈니스 로직을 처리하는 클래스
+
+ - /admin/dao/PdtDao.java : 상품 관련 DB 작업 처리 클래스
+
+Model-front
+ - /vo/CartInfo.java : 장바구니 정보를 저장할 클래스
+
+ - /action/PdtListAction : 상품 목록 보기로 이동시키는 클래스
+ - /action/PdtViewAction : 상품 정보 보기로 이동시키는 클래스
+ - /action/CartListAction : 장바구니 보기로 이동시키는 클래스
+ - /action/CartProcAction : 장바구니 기능을 처리하는 클래스
+
+ - /svc/PdtListSvc : 상품 목록 비즈니스 로직을 처리하는 클래스
+ - /svc/PdtViewSvc : 상품 정보 비즈니스 로직을 처리하는 클래스
+ - /svc/CartListSvc : 장바구니 비즈니스 로직을 처리하는 클래스
+ - /svc/CartProcSvc : 장바구니 기능 비즈니스 로직을 처리하는 클래스
+
+ - /dao/PdtDao.java : 상품 관련 DB 작업 처리 클래스
+ - /dao/CartDao.java : 장바구니 관련 DB 작업 처리 클래스
+
+작업순서
+ 1. 백엔드(*.pdta) : 상품등록폼, 등록처리, 상품목록(검색, 페이징), 상품보기, 상품수정폼, 수정처리
+ 2. 프론트(*.pdt, *.crt) : 상품목록(검색, 페이징), 상품보기, 장바구니
+

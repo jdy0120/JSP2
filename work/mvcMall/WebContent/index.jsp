@@ -26,5 +26,9 @@ if (loginMember == null) {
 %>
 <hr />
 <a href="brd_list.free">자유 게시판</a><br>
+<hr />
+<a href="pdt_in_form.pdta">상품등록-백엔드</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="pdt_list.pdta">상품목록-백엔드</a>
+<hr />
 </body>
 </html>
