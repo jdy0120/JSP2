@@ -224,24 +224,23 @@ public class FreeDao {
 
 		return result;
 	}
-	
+
 	public int freeDelete(FreeInfo freeInfo) {
-	// 게시글 삭제을 위한 메소드
+	// 게시글 삭제를 위한 메소드
 		Statement stmt = null;
 		String sql = null;
 		int result = 0;		// 쿼리 실행 결과 개수를 저장할 변수
-		
+
 		try {
 			String where = " where fl_idx = " + freeInfo.getFl_idx();
-			if (freeInfo.getFl_ismember().equals("y")) { // 회원글인 경우
-				where += " and fl_writer = ? " + freeInfo.getFl_writer() + "' ";
-			} else { // 비회원 글인 경우
+			if (freeInfo.getFl_ismember().equals("y"))	// 회원글인 경우
+				where += " and fl_writer = '" + freeInfo.getFl_writer() + "' ";
+			else	// 비회원 글인 경우
 				where += " and fl_pwd = '" + freeInfo.getFl_pwd() + "' ";
-			}
 			sql = "update t_free_list set fl_status = 'b' " + where;
 			stmt = conn.createStatement();
 			result = stmt.executeUpdate(sql);
-			
+
 		} catch(Exception e) {
 			System.out.println("freeUpdate() 오류");
 			e.printStackTrace();

@@ -3,7 +3,7 @@ package vo;
 public class BrandInfo {
 // 브랜드 정보를 저장할 클래스
 	private int bl_idx;
-	private String bl_name,bl_date;
+	private String bl_name, bl_date;
 
 	public int getBl_idx() {
 		return bl_idx;

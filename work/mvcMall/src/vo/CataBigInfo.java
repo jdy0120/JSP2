@@ -2,9 +2,9 @@ package vo;
 
 public class CataBigInfo {
 // 대분류 정보를 저장할 클래스
-	private String cb_name, cb_date; 
+	private String cb_name, cb_date;
 	private int cb_idx;
-	
+
 	public String getCb_name() {
 		return cb_name;
 	}

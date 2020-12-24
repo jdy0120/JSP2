@@ -2,9 +2,11 @@ package vo;
 
 public class PdtInfo {
 // 하나의 상품 정보를 저장할 클래스
-	private String pl_id, pl_orig,pl_name,pl_opt,pl_img1,pl_img2,pl_img3,pl_desc,pl_deli,pl_view,pl_date;
-	private int cs_idx,bl_idx,pl_price,pl_cost,pl_discount,pl_stock,pl_salecnt,pl_review,al_idx;
-	
+	private String pl_id, pl_orig, pl_name, pl_opt, pl_img1, pl_img2;
+	private String pl_img3, pl_desc, pl_deli, pl_view, pl_date;
+	private int cs_idx, bl_idx, pl_price, pl_cost, pl_discount;
+	private int pl_stock, pl_salecnt, pl_review, al_idx;
+
 	public String getPl_id() {
 		return pl_id;
 	}
@@ -125,5 +127,4 @@ public class PdtInfo {
 	public void setAl_idx(int al_idx) {
 		this.al_idx = al_idx;
 	}
-	
 }

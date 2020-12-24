@@ -1,10 +1,6 @@
 package admin.controller;
 
 import java.io.IOException;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
 import action.Action;
@@ -13,14 +9,18 @@ import action.FreeListAction;
 import action.FreeProcAction;
 import action.FreePwdAction;
 import action.FreeViewAction;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import admin.action.*;
 import vo.*;
 
 @WebServlet("*.pdta")
 public class ProductCtrl extends HttpServlet {
-	// 어드민 상품관려 ㄴ기능에 대한 요청을 처리하는 컨트롤러 서블릿 클래스
+// 어드민 상품관련 기능에 대한 요청을 처리하는 컨트롤러 서블릿 클래스
 	private static final long serialVersionUID = 1L;
-       
+
     public ProductCtrl() {
         super();
     }
@@ -34,13 +34,17 @@ public class ProductCtrl extends HttpServlet {
 
 		ActionForward forward = null;
 		Action action = null;
-		
+
+		// 사용자의 요청 종류에 따라 각각 다른 action을 취함
 		switch (command) {
-		case "/pdt_in_form.pdta" :
-			action = new PdtInFormAction();
-			break;
+			case "/pdt_in_form.pdta" :		// 상품 등록 폼
+				action = new PdtInFormAction();		break;
+			case "/pdt_in_proc.pdta" :		// 상품 등록 처리
+				action = new PdtInProcAction();		break;
+			case "/pdt_list.pdta" :			// 상품 목록 화면
+				action = new PdtListAction();		break;
 		}
-		
+
 		try {
 			forward = action.execute(request, response);
 		} catch (Exception e) {
@@ -57,8 +61,6 @@ public class ProductCtrl extends HttpServlet {
 			}
 		}
 	}
-	
-
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doProcess(request, response);
@@ -67,5 +69,4 @@ public class ProductCtrl extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doProcess(request, response);
 	}
-
 }

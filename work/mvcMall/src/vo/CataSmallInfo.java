@@ -4,7 +4,7 @@ public class CataSmallInfo {
 // 소분류 정보를 저장할 클래스
 	private int cs_idx, cb_idx;
 	private String cs_name, cs_date;
-	
+
 	public int getCs_idx() {
 		return cs_idx;
 	}
