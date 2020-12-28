@@ -53,8 +53,7 @@ public class FreeDao {
 		return result;
 	}
 
-	public ArrayList<FreeInfo> getArticleList(
-		String where, int cpage, int limit) {
+	public ArrayList<FreeInfo> getArticleList(String where, int cpage, int limit) {
 	// 검색된 게시글 목록을 ArrayList형태로 리턴하는 메소드
 		Statement stmt = null;
 		ResultSet rs = null;

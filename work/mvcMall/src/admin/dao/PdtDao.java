@@ -174,38 +174,44 @@ public class PdtDao {
 
 		return result;
 	}
-	
+
 	public int getPdtCount(String where) {
 	// 조건을 받아와 조건에 맞는 상품들의 총 개수를 리턴하는 메소드
 		int rcnt = 0;
 		Statement stmt = null;
 		ResultSet rs = null;
 		String sql = null;
-		
+
 		try {
-			sql = "select count(*) from t_product_list where 1=1 " + where;
+			sql = "select count(*) from t_product_list a, t_cata_big b, t_cata_small c " + 
+				" where a.cs_idx = c.cs_idx and b.cb_idx = c.cb_idx " + where;
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
-			if (rs.next()) rcnt = rs.getInt(1);
+			if (rs.next())	rcnt = rs.getInt(1);
 		} catch(Exception e) {
 			System.out.println("getPdtCount() 오류");
 			e.printStackTrace();
 		} finally {
 			close(rs);	close(stmt);
 		}
+
 		return rcnt;
 	}
-	
+
 	public ArrayList<PdtInfo> getPdtList(String where, String orderby, int cpage, int psize) {
+	// 검색조건과 정렬조건을 받아와 조건에 맞는 상품들을 정렬하여 그 목록을 ArrayList<PdtInfo>형으로 리턴하는 메소드
 		ArrayList<PdtInfo> pdtList = new ArrayList<PdtInfo>();
+		// 상품 목록을 저장할 ArrayList객체로 PdtInfo형 인스턴스만 저장함
 		Statement stmt = null;
 		ResultSet rs = null;
 		String sql = null;
-		PdtInfo pdtInfo = null;	// 하나의 상품정보를 저장한 후  pdtList에 저장될 인스턴스
-		int snum = (cpage - 1) * psize; // 쿼리의 limit 명령에서 데이터를 가져올 시작 인덱스 번호
-		
+		PdtInfo pdtInfo = null;		// 하나의 상품정보를 저장한 후 pdtList에 저장될 인스턴스
+		int snum = (cpage - 1) * psize;		// 쿼리의 limit 명령에서 데이터를 가져올 시작 인덱스 번호
+
 		try {
-			sql = "select * from t_product_list where 1=1 " + where + orderby + " limit " + snum + ", " + psize;
+			sql = "select a.*, b.cb_name, c.cs_name from t_product_list a, t_cata_big b, " + 
+				" t_cata_small c where a.cs_idx = c.cs_idx and b.cb_idx = c.cb_idx " + 
+				where + orderby + " limit " + snum + ", " + psize;
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
@@ -230,15 +236,17 @@ public class PdtDao {
 				pdtInfo.setPl_view(rs.getString("pl_view"));
 				pdtInfo.setPl_date(rs.getString("pl_date"));
 				pdtInfo.setAl_idx(rs.getInt("al_idx"));
+				pdtInfo.setCb_name(rs.getString("cb_name"));
+				pdtInfo.setCs_name(rs.getString("cs_name"));
 				pdtList.add(pdtInfo);
 			}
 		} catch(Exception e) {
-			System.out.println("getPdtCount() 오류");
+			System.out.println("getPdtList() 오류");
 			e.printStackTrace();
 		} finally {
 			close(rs);	close(stmt);
 		}
-		
+
 		return pdtList;
 	}
 }

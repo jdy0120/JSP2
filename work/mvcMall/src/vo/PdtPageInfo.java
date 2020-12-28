@@ -2,13 +2,13 @@ package vo;
 
 public class PdtPageInfo {
 // 상품 목록 페이지에 필요한 데이터들을 저장하는 클래스(어드민과 프론트 공용)
-	// 현재 page번호, page수, 시작page, 종료page, 게시글수, 블록크기, page크기
 	private int cpage, pcnt, spage, epage, rcnt, bsize, psize;
-	// 검색조건 : 게시여부-admin, 키워드(상품명, 상품아이디), 등록기간-admin, 카테고리, 가격대, 재고-admin
+	// 현재 page번호, page수, 시작page, 종료page, 게시글수, 블록크기, page크기
 	private String isview, schtype, keyword, sdate, edate, bcata, scata, sprice, eprice, stock;
-	// 정렬조건 : 가격price(오a내d), 상품명name(오a), 등록일date(오a내d), 인기salecnt(내d), 리뷰review(내d)
+	// 검색조건 : 게시여부-admin, 키워드(상품명, 상품아이디), 등록기간-admin, 대분류, 소분류, 가격대, 재고-admin
 	private String ord;
-	
+	// 정렬조건 : 가격price(오a내d), 상품명name(오a), 등록일date(오a내d), 인기salecnt(내d), 리뷰review(내d)
+
 	public int getCpage() {
 		return cpage;
 	}
@@ -117,6 +117,4 @@ public class PdtPageInfo {
 	public void setOrd(String ord) {
 		this.ord = ord;
 	}
-	
-	
 }

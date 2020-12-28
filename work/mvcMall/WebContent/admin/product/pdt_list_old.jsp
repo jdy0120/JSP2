@@ -49,11 +49,9 @@ args = "&cpage=" + cpage + schArgs;
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 <style>
-td { font-size:11; }
+td { font-size:11px; }
 .date { width:80px; }
-.pr { width:50px; }
-.pdtBox3 { width:266px; height:250px; border:1px solid black; }
-.pdtBox4 { width:195px; height:200px; border:1px solid black; }
+.pr { width:80px; }
 </style>
 <script>
 <%
@@ -111,23 +109,23 @@ function setCategory(obj, target) {
 	</select>
 </td>
 <th width="15%">등록기간</th>
-<td>
-	<input type="text" name="sdate" class="date"/> ~ <input type="text" name="edate" class="date"/>
+<td width="35%">
+	<input type="text" name="sdate" class="date" /> ~ <input type="text" name="edate" class="date" />
 </td>
 </tr>
 <tr>
 <th>가격대</th>
 <td>
-	<input type="text" name="sprice"  class="pr"/>원 부터 <input type="text" name="eprice" class="pr"/>원 까지
+	<input type="text" name="sprice" class="pr" />원 부터 <input type="text" name="eprice" class="pr" />원 까지
 </td>
 <th>검색어</th>
-<td colspan="3">
+<td>
 	<select name="schtype">
 		<option value="">검색조건</option>
 		<option value="id">상품 아이디</option>
 		<option value="name">상품 이름</option>
 	</select>
-	<input type="text" name="keyword" class="date"/>
+	<input type="text" name="keyword" />
 </td>
 </tr>
 <tr>
@@ -180,65 +178,5 @@ function setCategory(obj, target) {
 </td></tr>
 </table>
 </form>
-<br /><br />
-<table width="800" cellpadding="5">
-<%
-psize = 8;
-int max = 3;	// 한 행에서 보여줄 상품의 최대 개수
-switch (psize) {
-	case 8 :	max = 4;	break;
-	case 10 :	max = 1;	break;
-}
-
-if (pdtList != null && rcnt > 0) {	// 검색결과가 있으면
-	if (max == 1) {		// 한 행에서 보여줄 상품의 최대 개수가 1이면 게시판 형식으로 보여줌
-%>
-<tr>
-<th width="7%">번호</th><th width="10%">상품분류<br />소분류</th>
-<th width="15%">이미지</th><th width="*">상품아이디<br />상품명</th>
-<th width="10%">가격<br />원가</th><th width="15%">등록일<br />게시</th>
-</tr>
-<%
-		int seq = rcnt - (10 * (cpage - 1));	// 현재 페이지에서의 시작번호
-		String lnk = "";
-		for (int i = 0 ; i < pdtList.size() && i < psize ; i++) {
-			lnk = "<a href='pdt_view.pdta?id=" + pdtList.get(i).getPl_id() + args + "'>";
-%>
-<tr align="center">
-<td><%=seq-- %></td>
-<td><%=pdtList.get(i).getCb_name() + "<br />" + pdtList.get(i).getCs_name() %></td>
-<td><img src="/product/pdt_img/<%=pdtList.get(i).getPl_img1() %>" width="110" /></td>
-<td align="left"><%=lnk + pdtList.get(i).getPl_id() + "<br />" + lnk + pdtList.get(i).getPl_name()%></a></td>
-<td><%=pdtList.get(i).getPl_price() + "<br />" + pdtList.get(i).getPl_cost() %></td>
-<td><%=pdtList.get(i).getPl_date().substring(0, 10) %><br />
-<%=pdtList.get(i).getPl_view().equals("y") ? "게시" : "미게시" %></td>
-</tr>
-<%
-		}
-	} else {	// 한 행에서 보여줄 상품의 최대 개수가 3이나 4이면
-		String lnk = "";
-		for (int i = 0 ; i < pdtList.size() && i < psize ; i++) {
-			lnk = "<a href='pdt_view.pdta?id=" + pdtList.get(i).getPl_id() + args + "'>";
-			if (i % max == 0)	out.println("<tr align=\"center\">");
-%>
-<td>
-	<div class="pdtBox<%=max%>">
-		<%=lnk %><img src="/product/pdt_img/" width="<%=max == 3 ? 250 : 190 %>" /></a><br />
-		<%=lnk + pdtList.get(i).getPl_name() %></a><br />
-		판매가 : <%=pdtList.get(i).getPl_price() %><br />
-		할인가 : 
-	</div>
-</td>
-<%
-			if (i % max == max - 1)	out.println("</tr>");
-		}
-%>
-<%
-	}
-} else {
-	out.println("<tr><td align='center'>검색결과가 없습니다.</td></tr>");
-}
-%>
-</table>
 </body>
 </html>
