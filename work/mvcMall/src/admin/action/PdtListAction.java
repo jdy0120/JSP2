@@ -2,12 +2,12 @@ package admin.action;
 
 import javax.servlet.http.*;
 import java.util.*;
-import svc.*;
+import admin.svc.*;
 import vo.*;
 
 public class PdtListAction implements action.Action {
 	public ActionForward execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ArrayList<PdtInfo> articleList = new ArrayList<PdtInfo>();
+		ArrayList<PdtInfo> pdtList = new ArrayList<PdtInfo>();
 		// 상품 목록을 저장할 ArrayList객체로 PdtInfo형 인스턴스만 저장함
 
 		request.setCharacterEncoding("utf-8");
@@ -19,13 +19,14 @@ public class PdtListAction implements action.Action {
 			psize = Integer.parseInt(request.getParameter("psize"));
 
 		// 검색조건 쿼리스트링을 받음
-		String isview, schtype, keyword, sdate, edate, cata, sprice, eprice, stock;
+		String isview, schtype, keyword, sdate, edate, bcata, scata, sprice, eprice, stock;
 		isview	= request.getParameter("isview");	// 게시여부(y, n)
 		schtype = request.getParameter("schtype");	// 검색조건으로 상품아이디(id)와 상품명(name)
 		keyword = request.getParameter("keyword");	// 검색어
 		sdate	= request.getParameter("sdate");	// 등록기간 중 검색 시작일
 		edate	= request.getParameter("edate");	// 등록기간 중 검색 종료일
-		cata	= request.getParameter("cata");		// 상품분류
+		bcata	= request.getParameter("bcata");		// 상품분
+		scata	= request.getParameter("scata");		// 상품분류
 		sprice	= request.getParameter("sprice");	// 가격대 중 시작 가격대
 		eprice	= request.getParameter("eprice");	// 가격대 중 종료 가격대
 		stock	= request.getParameter("stock");	// 재고량(이상)
@@ -37,7 +38,8 @@ public class PdtListAction implements action.Action {
 		if (isview != null)		where += " and pl_view = '" + isview + "' ";
 		if (sdate != null)		where += " and pl_date >= '" + sdate + "' ";
 		if (edate != null)		where += " and pl_date <= '" + edate + " 23:59:59' ";
-		if (cata != null)		where += " and cs_idx = '" + cata + "' ";
+		if (bcata != null)		where += " and cs_idx like '" + bcata + "%' ";
+		if (scata != null)		where += " and cs_idx = '" + scata + "' ";
 		if (sprice != null)		where += " and pl_price >= '" + sprice + "' ";
 		if (eprice != null)		where += " and pl_price <= '" + eprice + "' ";
 		if (stock != null)		where += " and pl_stock >= '" + stock + "' ";
@@ -50,6 +52,53 @@ public class PdtListAction implements action.Action {
 			(ord.substring(ord.length() - 1).equals("d") ? " desc" : " asc");
 		// 정렬값 : pricea, priced, namea, datea, dated, salecntd, reviewd
 
+		PdtListSvc pdtListSvc = new PdtListSvc();
+		
+		rcnt = pdtListSvc.getPdtCount(where); // 검색된 상품 수
+		
+		pdtList = pdtListSvc.getPdtList(where,orderby,cpage,psize);
+		// 현 페이지에서 보여줄 검색된 상품 목록
+		// 검색조건, 정렬조건, limit에서 사용할 값을 구하기 위해 현재페이지와 페이지크기를 인수로 가져감
+		
+		pcnt = rcnt/psize;
+		if (rcnt % psize > 0) pcnt++;
+		spage = (cpage - 1) / psize * psize + 1;
+		epage = spage + psize - 1;
+		if (epage > pcnt) epage = pcnt;
+		
+		PdtPageInfo pageInfo = new PdtPageInfo();	// 페이징에 필요한 정보를 담을 인스턴스 생성
+		pageInfo.setCpage(cpage);
+		pageInfo.setCpage(cpage);
+		pageInfo.setPcnt(pcnt);
+		pageInfo.setSpage(spage);
+		pageInfo.setEpage(epage);
+		pageInfo.setRcnt(rcnt);
+		pageInfo.setBsize(bsize);
+		pageInfo.setPsize(psize);
+		
+		pageInfo.setIsview(isview);	//게시여부(전체게시, 게시상품, 미게시상품)
+		pageInfo.setSchtype(schtype);	//검색조건(상품코드, 상품명)
+		pageInfo.setKeyword(keyword);// 검색어
+		pageInfo.setSdate(sdate);// 등록일 검색시작일
+		pageInfo.setEdate(edate);// 등록일 검색 종료일
+		pageInfo.setBcata(bcata);// 대분류
+		pageInfo.setScata(scata);// 소분류
+		pageInfo.setSprice(sprice); // 가격대 시작 가격
+		pageInfo.setEprice(eprice); //가격대 시작가격
+		pageInfo.setStock(stock); // 재고량(이상)
+		pageInfo.setOrd(orderby); // 정렬조건
+		
+		PdtInFormSvc pdtInFormSvc = new PdtInFormSvc();
+		// 대분류, 소분류, 브랜드 목록을 가져오기 위한 Svc클래스
+		ArrayList<CataBigInfo> cataBigList = pdtInFormSvc.getCataBigList();			// 대분류 목록
+		ArrayList<CataSmallInfo> cataSmallList = pdtInFormSvc.getCataSmallList();
+		
+		request.setAttribute("pdtList",pdtList);
+		request.setAttribute("pageInfo", pageInfo);
+		request.setAttribute("cataBigList", cataBigList);
+		request.setAttribute("cataSmallList", cataSmallList);
+		// 상품목록 화면(pdt_list.jsp)으로 목록(pdtList)과 페이징 정보(pageInfo), 분류들을 request에 담아 가져감
+		
 		ActionForward forward = new ActionForward();
 		forward.setPath("/admin/product/pdt_list.jsp");
 		return forward;

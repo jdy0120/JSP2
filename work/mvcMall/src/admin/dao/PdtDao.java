@@ -174,4 +174,71 @@ public class PdtDao {
 
 		return result;
 	}
+	
+	public int getPdtCount(String where) {
+	// 조건을 받아와 조건에 맞는 상품들의 총 개수를 리턴하는 메소드
+		int rcnt = 0;
+		Statement stmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		
+		try {
+			sql = "select count(*) from t_product_list where 1=1 " + where;
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			if (rs.next()) rcnt = rs.getInt(1);
+		} catch(Exception e) {
+			System.out.println("getPdtCount() 오류");
+			e.printStackTrace();
+		} finally {
+			close(rs);	close(stmt);
+		}
+		return rcnt;
+	}
+	
+	public ArrayList<PdtInfo> getPdtList(String where, String orderby, int cpage, int psize) {
+		ArrayList<PdtInfo> pdtList = new ArrayList<PdtInfo>();
+		Statement stmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		PdtInfo pdtInfo = null;	// 하나의 상품정보를 저장한 후  pdtList에 저장될 인스턴스
+		int snum = (cpage - 1) * psize; // 쿼리의 limit 명령에서 데이터를 가져올 시작 인덱스 번호
+		
+		try {
+			sql = "select * from t_product_list where 1=1 " + where + orderby + " limit " + snum + ", " + psize;
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				pdtInfo = new PdtInfo();
+				pdtInfo.setPl_id(rs.getString("pl_id"));
+				pdtInfo.setCs_idx(rs.getInt("cs_idx"));
+				pdtInfo.setBl_idx(rs.getInt("bl_idx"));
+				pdtInfo.setPl_orig(rs.getString("pl_orig"));
+				pdtInfo.setPl_name(rs.getString("pl_name"));
+				pdtInfo.setPl_price(rs.getInt("pl_price"));
+				pdtInfo.setPl_cost(rs.getInt("pl_cost"));
+				pdtInfo.setPl_discount(rs.getInt("pl_discount"));
+				pdtInfo.setPl_opt(rs.getString("pl_opt"));
+				pdtInfo.setPl_img1(rs.getString("pl_img1"));
+				pdtInfo.setPl_img2(rs.getString("pl_img2"));
+				pdtInfo.setPl_img3(rs.getString("pl_img3"));
+				pdtInfo.setPl_desc(rs.getString("pl_desc"));
+				pdtInfo.setPl_deli(rs.getString("pl_deli"));
+				pdtInfo.setPl_stock(rs.getInt("pl_stock"));
+				pdtInfo.setPl_salecnt(rs.getInt("pl_salecnt"));
+				pdtInfo.setPl_review(rs.getInt("pl_review"));
+				pdtInfo.setPl_view(rs.getString("pl_view"));
+				pdtInfo.setPl_date(rs.getString("pl_date"));
+				pdtInfo.setAl_idx(rs.getInt("al_idx"));
+				pdtList.add(pdtInfo);
+			}
+		} catch(Exception e) {
+			System.out.println("getPdtCount() 오류");
+			e.printStackTrace();
+		} finally {
+			close(rs);	close(stmt);
+		}
+		
+		return pdtList;
+	}
 }
