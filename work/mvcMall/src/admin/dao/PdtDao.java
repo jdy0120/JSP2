@@ -137,7 +137,8 @@ public class PdtDao {
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
-				int n = Integer.parseInt(rs.getString(1)) + 1;
+				int n = 1;
+				if (rs.getString(1) != null) n = Integer.parseInt(rs.getString(1)) + 1;
 				if (n < 10)			plid = pdt.getCs_idx() + "pdt00" + n;
 				else if (n < 100)	plid = pdt.getCs_idx() + "pdt0" + n;
 				else				plid = pdt.getCs_idx() + "pdt" + n;

@@ -42,7 +42,6 @@ public class PdtListAction implements action.Action {
 		if (scata != null && !scata.equals(""))		where += " and a.cs_idx = '" + scata + "' ";
 		if (sprice != null && !sprice.equals(""))		where += " and a.pl_price >= '" + sprice + "' ";
 		if (eprice != null && !eprice.equals(""))		where += " and a.pl_price <= '" + eprice + "' ";
-		if (stock != null && !stock.equals(""))		where += " and a.pl_stock >= '" + stock + "' ";
 		if (keyword != null && !keyword.equals("")) {
 			if (stock.equals("-1") || stock.equals("0")) {
 				where += " and a.pl_stock = '" + stock + "' ";

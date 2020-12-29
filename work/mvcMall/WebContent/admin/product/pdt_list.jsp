@@ -45,6 +45,7 @@ int bsize	= pageInfo.getBsize();	// 블록 페이지 개수
 int spage	= pageInfo.getSpage();	// 블록 시작 페이지 번호
 int epage	= pageInfo.getEpage();	// 블록 종료 페이지 번호
 int rcnt	= pageInfo.getRcnt();	// 검색된 게시물 개수
+schArgs = "&psize=" + psize + schArgs;
 args = "&cpage=" + cpage + schArgs;
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -253,7 +254,7 @@ if (pdtList != null && rcnt > 0) {	// 검색결과가 있으면
 <tr align="center">
 <td><%=seq-- %></td>
 <td><%=pdtList.get(i).getCb_name() + "<br />" + pdtList.get(i).getCs_name() %></td>
-<td><img src="/product/pdt_img/<%=pdtList.get(i).getPl_img1() %>" width="110" /></td>
+<td><img src="/mvcMall/product/pdt_img/<%=pdtList.get(i).getPl_img1() %>" width="110" /></td>
 <td align="left"><%=lnk + pdtList.get(i).getPl_id() + "<br />" + lnk + pdtList.get(i).getPl_name()%></a></td>
 <td><%=pdtList.get(i).getPl_price() + "<br />" + pdtList.get(i).getPl_cost() %></td>
 <td><%=pdtList.get(i).getPl_date().substring(0, 10) %><br />
@@ -269,7 +270,7 @@ if (pdtList != null && rcnt > 0) {	// 검색결과가 있으면
 %>
 <td>
 	<div class="pdtBox<%=max%>">
-		<%=lnk %><img src="/product/pdt_img/" width="<%=max == 3 ? 250 : 190 %>" /></a><br />
+		<%=lnk %><img src="/mvcMall/product/pdt_img/<%=pdtList.get(i).getPl_img1() %>" width="<%=max == 3 ? 250 : 190 %>" /></a><br />
 		<%=lnk + pdtList.get(i).getPl_name() %></a><br />
 		판매가 : <%=pdtList.get(i).getPl_price() %><br />
 		할인가 : 
@@ -284,5 +285,44 @@ if (pdtList != null && rcnt > 0) {	// 검색결과가 있으면
 }
 %>
 </table>
+<br />
+<table width="800" cellpadding="5">
+<tr>
+<td width="*">
+<%
+if (rcnt > 0) {
+	if (rcnt % 10 > 0)	pcnt++;
+	if (cpage == 1) {
+		out.println("[<<]&nbsp;&nbsp;[<]&nbsp;&nbsp;");
+	} else {
+		out.print("<a href='pdt_list.pdta?cpage=1" + schArgs + "'>");
+		out.println("[<<]</a>&nbsp;&nbsp;");
+		out.print("<a href='pdt_list.pdta?cpage=" + (cpage - 1) + schArgs + "'>");
+		out.println("[<]</a>&nbsp;&nbsp;");
+	}
+
+	for (int i = 1, j = spage ; i <= bsize && j <= pcnt ; i++, j++) {
+		if (cpage == j) {
+			out.println("&nbsp;<strong>" + j + "</strong>&nbsp;");
+		} else {
+			out.print("&nbsp;<a href='pdt_list.pdta?cpage=" + j + schArgs + "'>");
+			out.println(j + "</a>&nbsp;");
+		}
+	}
+
+	if (cpage == pcnt) {
+		out.println("&nbsp;&nbsp;[>]&nbsp;&nbsp;[>>]");
+	} else {
+		out.print("&nbsp;&nbsp;<a href='pdt_list.pdta?cpage=" + (cpage + 1) + schArgs + "'>");
+		out.println("[>]</a>");
+		out.print("&nbsp;&nbsp;<a href='pdt_list.pdta?cpage=" + pcnt + schArgs + "'>");
+		out.println("[>>]</a>");
+	}
+}
+%>
+</td>
+<td width="10%">
+	<input type="button" value="상품 등록" onclick="location.href='pdt_in_form.pdta';" />
+</td>
 </body>
 </html>

@@ -15,7 +15,7 @@ public class PdtInProcAction implements action.Action {
 		PdtInProcSvc pdtInProcSvc = new PdtInProcSvc();
 		request.setCharacterEncoding("utf-8");
 
-		String uploadPath = "D:/zoom/jsp/work/mvcMall/WebContent/product/pdt_img";
+		String uploadPath = "D:/jsp/work/mvcMall/WebContent/product/pdt_img";
 		// 파일을 저장할 실제 위치를 구함
 		int maxSize = 5 * 1024 * 1024;		// 업로드 최대 용량으로 5MB로 지정
 		String sCata = "", brand = "", orig = "", name = "", opt = "", view = "";
@@ -32,8 +32,10 @@ public class PdtInProcAction implements action.Action {
 		sCata = multi.getParameter("sCata");	brand = multi.getParameter("brand");
 		orig = multi.getParameter("orig");		name = multi.getParameter("name");
 		opt = multi.getParameter("opt");		view = multi.getParameter("view");
-		price = multi.getParameter("price");	cost = multi.getParameter("cost");
-		stock = multi.getParameter("stock");	discount = multi.getParameter("discount");
+		price = multi.getParameter("price");	if (price == null || price.equals("")) price = "0";
+		cost = multi.getParameter("cost");		if (cost == null || cost.equals("")) cost = "0";
+		stock = multi.getParameter("stock");	if (stock == null || stock.equals("")) stock = "0";
+		discount = multi.getParameter("discount");if (discount == null || discount.equals("")) discount = "0";
 		// 등록할 상품에 대해 받아 옴
 
 		Enumeration files = multi.getFileNames();	// 업로드할 파일 이름들을 Enumeration형으로 받아 옴
@@ -67,6 +69,7 @@ public class PdtInProcAction implements action.Action {
 		}
 
 		forward.setPath("pdt_list.pdta");
+		forward.setRedirect(true);
 		return forward;
 	}
 }
