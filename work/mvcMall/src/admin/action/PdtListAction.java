@@ -35,19 +35,25 @@ public class PdtListAction implements action.Action {
 		String ord = request.getParameter("ord");
 
 		String where = "", orderby = "";
-		if (isview != null)		where += " and a.pl_view = '" + isview + "' ";
-		if (sdate != null)		where += " and a.pl_date >= '" + sdate + "' ";
-		if (edate != null)		where += " and a.pl_date <= '" + edate + " 23:59:59' ";
-		if (bcata != null)		where += " and b.cb_idx  = '" + bcata + "' ";
-		if (scata != null)		where += " and a.cs_idx = '" + scata + "' ";
-		if (sprice != null)		where += " and a.pl_price >= '" + sprice + "' ";
-		if (eprice != null)		where += " and a.pl_price <= '" + eprice + "' ";
-		if (stock != null)		where += " and a.pl_stock >= '" + stock + "' ";
-		if (keyword != null && !keyword.equals(""))
-			where += " and a.pl_" + schtype + " like '%" + keyword + "%' ";
+		if (isview != null && !isview.equals(""))		where += " and a.pl_view = '" + isview + "' ";
+		if (sdate != null && !sdate.equals(""))		where += " and a.pl_date >= '" + sdate + "' ";
+		if (edate != null && !edate.equals(""))		where += " and a.pl_date <= '" + edate + " 23:59:59' ";
+		if (bcata != null && !bcata.equals(""))		where += " and b.cb_idx  = '" + bcata + "' ";
+		if (scata != null && !scata.equals(""))		where += " and a.cs_idx = '" + scata + "' ";
+		if (sprice != null && !sprice.equals(""))		where += " and a.pl_price >= '" + sprice + "' ";
+		if (eprice != null && !eprice.equals(""))		where += " and a.pl_price <= '" + eprice + "' ";
+		if (stock != null && !stock.equals(""))		where += " and a.pl_stock >= '" + stock + "' ";
+		if (keyword != null && !keyword.equals("")) {
+			if (stock.equals("-1") || stock.equals("0")) {
+				where += " and a.pl_stock = '" + stock + "' ";
+				// 재고량이 무한대이거나 0이면 해당상품만을 검색,
+			} else {
+				where += " and a.pl_stock >= '" + stock + "' ";
+				// 아닐경우 해당숫자 이상인 상품들을 검색
+			}
 		// 검색조건용 where절 생성
-
-		if (ord != null)
+		}
+		if (ord != null && !ord.equals(""))
 			orderby = " order by a.pl_" + ord.substring(0, ord.length() - 1) + 
 			(ord.substring(ord.length() - 1).equals("d") ? " desc" : " asc");
 		// 정렬값 : pricea, priced, namea, datea, dated, salecntd, reviewd

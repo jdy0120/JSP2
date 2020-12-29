@@ -22,17 +22,21 @@ stock =		pageInfo.getStock();	// 재고량(이상)
 ord =		pageInfo.getOrd();		// 정렬조건
 
 String args = "", schArgs = "";
-if (isview != null)		schArgs += "&isview=" + isview;
-if (sdate != null)		schArgs += "&sdate=" + sdate;
-if (edate != null)		schArgs += "&edate=" + edate;
-if (bcata != null)		schArgs += "&bcata=" + bcata;
-if (scata != null)		schArgs += "&scata=" + scata;
-if (sprice != null)		schArgs += "&sprice=" + sprice;
-if (eprice != null)		schArgs += "&eprice=" + eprice;
-if (stock != null)		schArgs += "&stock=" + stock;
-if (keyword != null && !keyword.equals(""))
+if (isview != null)		schArgs += "&isview=" + isview;		else	isview = "";
+if (sdate != null)		schArgs += "&sdate=" + sdate;		else	sdate = "";
+if (edate != null)		schArgs += "&edate=" + edate;		else	edate = "";
+if (bcata != null)		schArgs += "&bcata=" + bcata;		else	bcata = "";
+if (scata != null)		schArgs += "&scata=" + scata;		else	scata = "";
+if (sprice != null)		schArgs += "&sprice=" + sprice;		else	sprice = "";
+if (eprice != null)		schArgs += "&eprice=" + eprice;		else	eprice = "";
+if (stock != null)		schArgs += "&stock=" + stock;		else	stock = "";
+if (keyword != null && !keyword.equals("")) {
 	schArgs += "&schtype=" + schtype + "&keyword=" + keyword;
-if (ord != null)		schArgs += "&ord=" + ord;
+} else {
+	schtype = "";	keyword = "";
+}
+
+if (ord != null)		schArgs += "&ord=" + ord;			else	ord = "";
 
 int cpage	= pageInfo.getCpage();	// 현재 페이지 번호
 int pcnt	= pageInfo.getPcnt();	// 전체 페이지 수
@@ -55,6 +59,31 @@ td { font-size:11; }
 .pdtBox3 { width:266px; height:250px; border:1px solid black; }
 .pdtBox4 { width:195px; height:200px; border:1px solid black; }
 </style>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script>
+$(function() {
+	$.datepicker.regional['ko'] = {
+		closeText: '닫기', prevText: '이전달', nextText: '다음달', currentText: '오늘',
+		monthNames: ['1월','2월','3월','4월','5월','6월', '7월','8월','9월','10월','11월','12월'],
+		monthNamesShort: ['1월','2월','3월','4월','5월','6월', '7월','8월','9월','10월','11월','12월'],
+		dayNames: ['일','월','화','수','목','금','토'],
+		dayNamesShort: ['일','월','화','수','목','금','토'],
+		dayNamesMin: ['일','월','화','수','목','금','토'],
+		buttonImageOnly: true, weekHeader: 'Wk', dateFormat: 'yy-mm-dd', firstDay: 0,
+		isRTL: false, duration:200, showAnim:'show', showMonthAfterYear: false
+	};
+	$.datepicker.setDefaults($.datepicker.regional['ko']);
+
+	$( "#sdate" ).datepicker({
+		changeMonth: true, dateFormat:"yy-mm-dd", onClose: function( selectedDate ) {}
+	});
+	$( "#edate" ).datepicker({
+		changeMonth: true, dateFormat:"yy-mm-dd", onClose: function( selectedDate ) {}
+	});
+});
+</script>
 <script>
 <%
 String scName = null;
@@ -101,31 +130,49 @@ function setCategory(obj, target) {
 <th width="15%">분류선택</th>
 <td width="35%">
 	<select name="bcata" onchange="setCategory(this, this.form.scata);">
-		<option value="">대분류 선택</option>
+		<option value="" <% if (bcata.equals("")) { %>selected="selected"<% } %>>대분류 선택</option>
 <% for (int i = 0 ; i < cataBigList.size() ; i++) { %>
-		<option value="<%=cataBigList.get(i).getCb_idx()%>"><%=cataBigList.get(i).getCb_name()%></option>
+		<option value="<%=cataBigList.get(i).getCb_idx()%>" 
+		<% if (bcata.equals(cataBigList.get(i).getCb_idx() + "")) { %>selected="selected"<% } %>>
+		<%=cataBigList.get(i).getCb_name()%></option>
 <% } %>
 	</select>&nbsp;
 	<select name="scata">
-		<option value="">소분류 선택</option>
+		<option value="" <% if (scata.equals("")) { %>selected="selected"<% } %>>소분류 선택</option>
+<%
+if (!bcata.equals("")) {	// 대분류를 이용하여 검색한 상태이면(소분류도 보여줘야 함)
+	for (int i = 0 ; i < cataSmallList.size() ; i++) {
+		if (bcata.equals((cataSmallList.get(i).getCs_idx() + "").substring(0, 2))) {
+		// 현재 선택된 대분류에 속한 소분류들만 보여줌
+%>
+	<option value="<%=cataSmallList.get(i).getCs_idx()%>" 
+	<% if (scata.equals(cataSmallList.get(i).getCs_idx() + "")) { %>selected="selected"<% } %>>
+	<%=cataSmallList.get(i).getCs_name()%></option>
+<%
+		}
+	}
+}
+%>
 	</select>
 </td>
 <th width="15%">등록기간</th>
 <td>
-	<input type="text" name="sdate" class="date"/> ~ <input type="text" name="edate" class="date"/>
+	<input type="text" name="sdate" id="sdate" class="date" value="<%=sdate%>"/> 이후&nbsp;
+	<input type="text" name="edate" id="edate" class="date" value="<%=edate%>"/> 이전
 </td>
 </tr>
 <tr>
 <th>가격대</th>
 <td>
-	<input type="text" name="sprice"  class="pr"/>원 부터 <input type="text" name="eprice" class="pr"/>원 까지
+	<input type="text" name="sprice" class="pr" value="<%=sprice%>"/>원 이상
+	<input type="text" name="eprice" class="pr" value="<%=eprice%>"/>원 이하
 </td>
 <th>검색어</th>
 <td colspan="3">
 	<select name="schtype">
-		<option value="">검색조건</option>
-		<option value="id">상품 아이디</option>
-		<option value="name">상품 이름</option>
+		<option value="" <% if (schtype.equals("")) { %>selected="selected"<% } %>>검색조건</option>
+		<option value="id" <% if (schtype.equals("id")) { %>selected="selected"<% } %>>상품 아이디</option>
+		<option value="name" <% if (schtype.equals("name")) { %>selected="selected"<% } %>>상품 이름</option>
 	</select>
 	<input type="text" name="keyword" class="date"/>
 </td>
@@ -134,43 +181,43 @@ function setCategory(obj, target) {
 <th>재고량</th>
 <td>
 	<select name="stock">
-		<option value="">재고량 선택</option>
-		<option value="-1">무한대</option>
+		<option value="" <% if (stock.equals("")) { %>selected="selected"<% } %>>재고량 선택</option>
+		<option value="-1" <% if (stock.equals("-1")) { %>selected="selected"<% } %>>무한대</option>
 <% for (int i = 0 ; i < 100 ; i++) { %>
-		<option value="<%=i%>"><%=i%></option>
+		<option value="<%=i%>" <% if (stock.equals(i + "")) { %>selected="selected"<% } %>><%=i%></option>
 <% } %>
 	</select>개 이상
 </td>
 <th>게시여부</th>
 <td>
-	<input type="radio" name="isview" value="" />전체 보기
-	&nbsp;<input type="radio" name="isview" value="y" />게시중
-	&nbsp;<input type="radio" name="isview" value="n" />미게시
+	<input type="radio" name="isview" value="" <% if (isview.equals("")) { %>checked="checked"<% } %> />전체 보기
+	&nbsp;<input type="radio" name="isview" value="y" <% if (isview.equals("y")) { %>checked="checked"<% } %> />게시중
+	&nbsp;<input type="radio" name="isview" value="n" <% if (isview.equals("n")) { %>checked="checked"<% } %> />미게시
 </td>
 </tr>
 <tr>
 <th>정렬방식</th>
 <td>
 	<select name="ord">
-		<option value="">상품아이디(오름차순)</option>
-		<option value="namea">상품명(오름차순)</option>
-		<option value="pricea">낮은 가격순(오름차순)</option>
-		<option value="priced">높은 가격순(내림차순)</option>
-		<option value="datea">오래된 등록일순(오름차순)</option>
-		<option value="dated">최근 등록일순(내림차순)</option>
-		<option value="salecntd">많이 팔린순(내림차순)</option>
-		<option value="reviewd">리뷰 개수순(내림차순)</option>
+		<option value="" <% if (ord.equals("")) { %>selected="selected"<% } %>>상품아이디(오름차순)</option>
+		<option value="namea" <% if (ord.equals("namea")) { %>selected="selected"<% } %>>상품명(오름차순)</option>
+		<option value="pricea" <% if (ord.equals("pricea")) { %>selected="selected"<% } %>>낮은 가격순(오름차순)</option>
+		<option value="priced" <% if (ord.equals("priced")) { %>selected="selected"<% } %>>높은 가격순(내림차순)</option>
+		<option value="datea" <% if (ord.equals("datea")) { %>selected="selected"<% } %>>오래된 등록일순(오름차순)</option>
+		<option value="dated" <% if (ord.equals("dated")) { %>selected="selected"<% } %>>최근 등록일순(내림차순)</option>
+		<option value="salecntd" <% if (ord.equals("salecntd")) { %>selected="selected"<% } %>>많이 팔린순(내림차순)</option>
+		<option value="reviewd" <% if (ord.equals("reviewd")) { %>selected="selected"<% } %>>리뷰 개수순(내림차순)</option>
 	</select>
 </td>
 <th>페이지 크기</th>
 <td>
 	<select name="psize">
-		<option value="12">12 개</option>
-		<option value="6">6 개</option>
-		<option value="8">8 개</option>
-		<option value="10">10 개</option>
-		<option value="24">24 개</option>
-	</select>개 씩 보여주기
+		<option value="12" <% if (psize == 12) { %>selected="selected"<% } %>>12 개</option>
+		<option value="6" <% if (psize == 6) { %>selected="selected"<% } %>>6 개</option>
+		<option value="8" <% if (psize == 8) { %>selected="selected"<% } %>>8 개</option>
+		<option value="10" <% if (psize == 10) { %>selected="selected"<% } %>>10 개</option>
+		<option value="24" <% if (psize == 24) { %>selected="selected"<% } %>>24 개</option>
+	</select> 씩 보여주기
 </td>
 </tr>
 <tr><td colspan="4" align="center">
@@ -183,7 +230,6 @@ function setCategory(obj, target) {
 <br /><br />
 <table width="800" cellpadding="5">
 <%
-psize = 8;
 int max = 3;	// 한 행에서 보여줄 상품의 최대 개수
 switch (psize) {
 	case 8 :	max = 4;	break;
@@ -232,8 +278,6 @@ if (pdtList != null && rcnt > 0) {	// 검색결과가 있으면
 <%
 			if (i % max == max - 1)	out.println("</tr>");
 		}
-%>
-<%
 	}
 } else {
 	out.println("<tr><td align='center'>검색결과가 없습니다.</td></tr>");
