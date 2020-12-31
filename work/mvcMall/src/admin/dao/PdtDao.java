@@ -138,7 +138,7 @@ public class PdtDao {
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
 				int n = 1;
-				if (rs.getString(1) != null) n = Integer.parseInt(rs.getString(1)) + 1;
+				if (rs.getString(1) != null)	n = Integer.parseInt(rs.getString(1)) + 1;
 				if (n < 10)			plid = pdt.getCs_idx() + "pdt00" + n;
 				else if (n < 100)	plid = pdt.getCs_idx() + "pdt0" + n;
 				else				plid = pdt.getCs_idx() + "pdt" + n;
@@ -176,6 +176,63 @@ public class PdtDao {
 		return result;
 	}
 
+	public int pdtUpdate(PdtInfo pdt) {
+	// 상품 수정 처리를 위한 메소드
+		int result = 0;
+		Statement stmt = null;
+		String sql = null;
+
+		try {
+			sql = "update t_product_list set " + 
+				"cs_idx = '"		+ pdt.getCs_idx()		+ "', " + 
+				"bl_idx = '"		+ pdt.getBl_idx()		+ "', " + 
+				"pl_orig = '"		+ pdt.getPl_orig()		+ "', " + 
+				"pl_name = '"		+ pdt.getPl_name()		+ "', " + 
+				"pl_price = '"		+ pdt.getPl_price()		+ "', " + 
+				"pl_cost = '"		+ pdt.getPl_cost()		+ "', " + 
+				"pl_discount = '"	+ pdt.getPl_discount()	+ "', " + 
+				"pl_opt = '"		+ pdt.getPl_opt()		+ "', " + 
+				"pl_img1 = '"		+ pdt.getPl_img1()		+ "', " + 
+				"pl_img2 = '"		+ pdt.getPl_img2()		+ "', " + 
+				"pl_img3 = '"		+ pdt.getPl_img3()		+ "', " + 
+				"pl_desc = '"		+ pdt.getPl_desc()		+ "', " + 
+				"pl_stock = '"		+ pdt.getPl_stock()		+ "', " + 
+				"pl_view = '"		+ pdt.getPl_view()		+ "' " + 
+				"where pl_id = '"	+ pdt.getPl_id()		+ "' ";
+			stmt = conn.createStatement();
+			result = stmt.executeUpdate(sql);
+
+		} catch(Exception e) {
+			System.out.println("pdtUpdate() 오류");
+			e.printStackTrace();
+		} finally {
+			close(stmt);
+		}
+
+		return result;
+	}
+
+	public int pdtDelete(String id) {
+		// 상품 삭제 처리를 위한 메소드
+			int result = 0;
+			Statement stmt = null;
+			String sql = null;
+
+			try {
+				sql = "delete from t_product_list set " + id + "' ";
+				stmt = conn.createStatement();
+				result = stmt.executeUpdate(sql);
+
+			} catch(Exception e) {
+				System.out.println("pdtDelete() 오류");
+				e.printStackTrace();
+			} finally {
+				close(stmt);
+			}
+
+			return result;
+		}
+	
 	public int getPdtCount(String where) {
 	// 조건을 받아와 조건에 맞는 상품들의 총 개수를 리턴하는 메소드
 		int rcnt = 0;
@@ -213,6 +270,7 @@ public class PdtDao {
 			sql = "select a.*, b.cb_name, c.cs_name from t_product_list a, t_cata_big b, " + 
 				" t_cata_small c where a.cs_idx = c.cs_idx and b.cb_idx = c.cb_idx " + 
 				where + orderby + " limit " + snum + ", " + psize;
+			System.out.println(sql);
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
@@ -249,5 +307,60 @@ public class PdtDao {
 		}
 
 		return pdtList;
+	}
+
+	public PdtInfo getPdtInfo(String id) {
+	// 지정된 id에 해당하는 하나의 상품정보를 PdtInfo형 인스턴스로 리턴하는 메소드
+		PdtInfo pdtInfo = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		String sql = null;
+
+		try {
+			int saleCnt = 0;
+			stmt = conn.createStatement();
+			sql = "select count(*) from t_order_detail where pl_id = '" + id + "'";
+			// 지정된 상품의 판매량을 구하기 위한 쿼리
+			rs = stmt.executeQuery(sql);
+			if (rs.next())	saleCnt = rs.getInt(1);
+
+			sql = "select a.*, b.cb_name, c.cs_name, d.bl_name " + 
+				" from t_product_list a, t_cata_big b, t_cata_small c, t_brand_list d " + 
+				" where a.cs_idx = c.cs_idx and a.bl_idx = d.bl_idx and " + 
+				" b.cb_idx = c.cb_idx and a.pl_id = '" + id + "' ";
+			rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				pdtInfo = new PdtInfo();
+				pdtInfo.setPl_id(rs.getString("pl_id"));
+				pdtInfo.setCs_idx(rs.getInt("cs_idx"));
+				pdtInfo.setBl_idx(rs.getInt("bl_idx"));
+				pdtInfo.setPl_orig(rs.getString("pl_orig"));
+				pdtInfo.setPl_name(rs.getString("pl_name"));
+				pdtInfo.setPl_price(rs.getInt("pl_price"));
+				pdtInfo.setPl_cost(rs.getInt("pl_cost"));
+				pdtInfo.setPl_discount(rs.getInt("pl_discount"));
+				pdtInfo.setPl_opt(rs.getString("pl_opt"));
+				pdtInfo.setPl_img1(rs.getString("pl_img1"));
+				pdtInfo.setPl_img2(rs.getString("pl_img2"));
+				pdtInfo.setPl_img3(rs.getString("pl_img3"));
+				pdtInfo.setPl_desc(rs.getString("pl_desc"));
+				pdtInfo.setPl_deli(rs.getString("pl_deli"));
+				pdtInfo.setPl_stock(rs.getInt("pl_stock"));
+				pdtInfo.setPl_salecnt(saleCnt);
+				pdtInfo.setPl_review(rs.getInt("pl_review"));
+				pdtInfo.setPl_view(rs.getString("pl_view"));
+				pdtInfo.setPl_date(rs.getString("pl_date"));
+				pdtInfo.setAl_idx(rs.getInt("al_idx"));
+				pdtInfo.setCb_name(rs.getString("cb_name"));
+				pdtInfo.setCs_name(rs.getString("cs_name"));
+			}
+		} catch(Exception e) {
+			System.out.println("getPdtInfo() 오류");
+			e.printStackTrace();
+		} finally {
+			close(rs);	close(stmt);
+		}
+
+		return pdtInfo;
 	}
 }
